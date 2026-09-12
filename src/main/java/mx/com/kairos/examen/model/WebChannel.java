@@ -10,6 +10,8 @@ public class WebChannel {
 	@JsonProperty("name")
 	private String name;
 	
+	@JsonProperty("country")
+	private Country country;
 	
 	@JsonProperty("officialSite")
 	private String officialSite;
@@ -32,6 +34,12 @@ public class WebChannel {
 	}
 	public void setOfficialSite(String officialSite) {
 		this.officialSite = officialSite;
+	}
+	public Country getCountry() {
+		return country;
+	}
+	public void setCountry(Country country) {
+		this.country = country;
 	}
 	
 	

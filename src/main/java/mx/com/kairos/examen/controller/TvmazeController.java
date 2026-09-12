@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import mx.com.kairos.examen.dto.TvmazeDTO;
+import mx.com.kairos.examen.dto.TvmazeShowDTO;
 import mx.com.kairos.examen.service.TvmazeService;
 
 @RestController
@@ -24,4 +25,12 @@ public class TvmazeController {
 	   public List<TvmazeDTO> getShows(@PathVariable String parameter) {
 	     return service.getShows(parameter);
 	   }
+	
+	/** B- Endpoint show: Crear un endpoint que obtenga la información del show 
+	 * a partir de su ID, retornando el objeto show. */
+	@GetMapping("/shows/{id}")
+	   public TvmazeShowDTO getShows(@PathVariable int id) {
+	     return service.getShowById(id);
+	   }
+	
 }

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import mx.com.kairos.examen.Constants.Constants;
 import mx.com.kairos.examen.dto.TvMazeResponseDTO;
 import mx.com.kairos.examen.dto.TvmazeDTO;
+import mx.com.kairos.examen.dto.TvmazeShowDTO;
 import mx.com.kairos.examen.service.TvmazeService;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
@@ -56,6 +57,21 @@ public class TvmazeServiceImpl implements TvmazeService{
 		ObjectMapper objectMapper = new ObjectMapper();
 		return objectMapper.readValue(dataResponse.body(), new TypeReference<List<TvMazeResponseDTO>>(){});
 	}
+
+
+    //Llama al rest service y obtiene el objeto show buscandolo por id mapeado
+	@Override
+	public TvmazeShowDTO getShowById(int id) {
+		HttpResponse<String> response;
+		ObjectMapper objectMapper = new ObjectMapper();
+		try {
+			response = restService.getSender(domain+Constants.GET_BY_ID+id);
+			return objectMapper.readValue(response.body(), TvmazeShowDTO.class);
+		} catch (IOException | InterruptedException e) {
+			return null;
+		}
+	}
+	
 	
 	
 	
