@@ -53,9 +53,20 @@ public class TvmazeServiceImpl implements TvmazeService {
 		List<TvMazeResponseDTO> tvMazeList = responseMapper(dataResponse);
 		for (TvMazeResponseDTO element : tvMazeList) {
 			TvmazeDTO aux = new TvmazeDTO(element.getShow());
+			aux.setComment(getComment (String.valueOf(aux.getId())));
 			listResponse.add(aux);
 		}
 		return listResponse;
+	}
+	
+	public Comments getComment(String id) {
+		Comments comments = null;
+		ObjectMapper mapper = new ObjectMapper();
+		Document response = mongoConection.getCommentById(id);
+		if (response != null) {
+			comments = mapper.convertValue(response, Comments.class);
+		}
+		return comments;
 	}
 
 	// Mapea el objeto recibido de la petición a la API de Tvmaze

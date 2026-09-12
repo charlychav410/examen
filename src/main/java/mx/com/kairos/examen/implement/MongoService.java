@@ -69,5 +69,10 @@ public class MongoService {
 		InsertOneResult result = collectionComment.insertOne(document);
 		return result.wasAcknowledged();
 	}
+	
+	public Document getCommentById(String id) {
+		Document shows = collectionComment.find(Filters.eq("_id", id)).first();
+		return shows;
+	}
 
 }

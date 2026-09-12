@@ -3,6 +3,7 @@ package mx.com.kairos.examen.dto;
 import java.io.Serializable;
 import java.util.Arrays;
 
+import mx.com.kairos.examen.model.Comments;
 import mx.com.kairos.examen.model.Shows;
 
 public class TvmazeDTO implements Serializable {
@@ -30,6 +31,7 @@ public class TvmazeDTO implements Serializable {
 	private String channel;
 	private String summary;
 	private String[] genres;
+	private Comments comment;
 
 	public int getId() {
 		return id;
@@ -69,6 +71,16 @@ public class TvmazeDTO implements Serializable {
 
 	public void setGenres(String[] genres) {
 		this.genres = genres;
+	}
+	
+	
+
+	public Comments getComment() {
+		return comment;
+	}
+
+	public void setComment(Comments comment) {
+		this.comment = comment;
 	}
 
 	@Override
