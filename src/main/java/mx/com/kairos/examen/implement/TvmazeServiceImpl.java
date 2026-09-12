@@ -17,62 +17,88 @@ import mx.com.kairos.examen.service.TvmazeService;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 
+import org.bson.Document;
+
 @Service
-public class TvmazeServiceImpl implements TvmazeService{
-	
+public class TvmazeServiceImpl implements TvmazeService {
+
 	@Value("${api.url.domain}")
 	private String domain;
-	
+
 	@Autowired
 	RestSendService restService;
-	
-	//Principal, llama restService, obtiene el response y llama el maper y el generador de lista
-	public List<TvmazeDTO> getShows(String tvParameter){
+
+	@Autowired
+	MongoService mongoConection;
+
+	// Principal, llama restService, obtiene el response y llama el maper y el
+	// generador de lista
+	public List<TvmazeDTO> getShows(String tvParameter) {
 		List<TvmazeDTO> dataResponse = new ArrayList<TvmazeDTO>();
-			HttpResponse<String> response;
-			try {
-				response = restService.getSender(domain+Constants.GET_SHOWS+tvParameter);
-				dataResponse.addAll(generateList(response));
-				return dataResponse;
-			} catch (IOException | InterruptedException e) {
-				dataResponse.add(null);
-				return dataResponse;
-			}
+		HttpResponse<String> response;
+		try {
+			response = restService.getSender(domain + Constants.GET_SHOWS + tvParameter);
+			dataResponse.addAll(generateList(response));
+			return dataResponse;
+		} catch (IOException | InterruptedException e) {
+			dataResponse.add(null);
+			return dataResponse;
+		}
 	}
-	
-	
-	//Convierte TvMazeResponseDTO a TvmazeDTO y lo agrega a la lista que se regresa
-	public List<TvmazeDTO> generateList(HttpResponse<String> dataResponse){
+
+	// Convierte TvMazeResponseDTO a TvmazeDTO y lo agrega a la lista que se regresa
+	public List<TvmazeDTO> generateList(HttpResponse<String> dataResponse) {
 		List<TvmazeDTO> listResponse = new ArrayList<TvmazeDTO>();
 		List<TvMazeResponseDTO> tvMazeList = responseMapper(dataResponse);
-		for(TvMazeResponseDTO element: tvMazeList) {
+		for (TvMazeResponseDTO element : tvMazeList) {
 			TvmazeDTO aux = new TvmazeDTO(element.getShow());
 			listResponse.add(aux);
 		}
 		return listResponse;
 	}
-	
-	//Mapea el objeto recibido de la petición a la API de Tvmaze
+
+	// Mapea el objeto recibido de la petición a la API de Tvmaze
 	public List<TvMazeResponseDTO> responseMapper(HttpResponse<String> dataResponse) {
 		ObjectMapper objectMapper = new ObjectMapper();
-		return objectMapper.readValue(dataResponse.body(), new TypeReference<List<TvMazeResponseDTO>>(){});
+		return objectMapper.readValue(dataResponse.body(), new TypeReference<List<TvMazeResponseDTO>>() {
+		});
 	}
 
-
-    //Llama al rest service y obtiene el objeto show buscandolo por id mapeado
+	// Llama al rest service y obtiene el objeto show buscandolo por id mapeado
 	@Override
 	public TvmazeShowDTO getShowById(int id) {
+		TvmazeShowDTO docu = getDocumentById(Integer.toString(id));
+		if (docu != null) {
+			return docu;
+		}
 		HttpResponse<String> response;
-		ObjectMapper objectMapper = new ObjectMapper();
 		try {
-			response = restService.getSender(domain+Constants.GET_BY_ID+id);
-			return objectMapper.readValue(response.body(), TvmazeShowDTO.class);
+			response = restService.getSender(domain + Constants.GET_BY_ID + id);
+			return mapperAndInsert(response);
 		} catch (IOException | InterruptedException e) {
 			return null;
 		}
 	}
 	
-	
-	
-	
+	//Mapea el DOcument y lo guarda en mongo
+	public TvmazeShowDTO mapperAndInsert(HttpResponse<String> response) {
+		ObjectMapper objectMapper = new ObjectMapper();
+		TvmazeShowDTO mapped = objectMapper.readValue(response.body(), TvmazeShowDTO.class);
+		mongoConection.saveDocument(mapped);
+		return mapped;
+	}
+
+	//Obtiene el documento en cache
+	public TvmazeShowDTO getDocumentById(String id) {
+		TvmazeShowDTO tvmazeShowDTO = null;
+		ObjectMapper mapper = new ObjectMapper();
+		Document response = mongoConection.getShowByID(id);
+		if (response != null) {
+			tvmazeShowDTO = mapper.convertValue(response, TvmazeShowDTO.class);
+		}
+		return tvmazeShowDTO;
+	}
+
+
+
 }

@@ -22,8 +22,8 @@ public class TvmazeShowDTO implements Serializable{
 	private static final long serialVersionUID = 1316630789892953485L;
 	
 	
-	@JsonProperty("id")
-	private int id;
+	@JsonProperty("_id")
+	private String _id;
 	@JsonProperty("url")
 	private String url;
 	@JsonProperty("name")
@@ -69,11 +69,11 @@ public class TvmazeShowDTO implements Serializable{
 	@JsonProperty("_links")
 	private Links _links;
 	
-	public int getId() {
-		return id;
+	public String getId() {
+		return _id;
 	}
-	public void setId(int id) {
-		this.id = id;
+	public void setId(String id) {
+		this._id = id;
 	}
 	public String getUrl() {
 		return url;
