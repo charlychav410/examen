@@ -5,11 +5,14 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import mx.com.kairos.examen.dto.TvmazeDTO;
 import mx.com.kairos.examen.dto.TvmazeShowDTO;
+import mx.com.kairos.examen.model.Comments;
 import mx.com.kairos.examen.service.TvmazeService;
 
 @RestController
@@ -32,5 +35,15 @@ public class TvmazeController {
 	   public TvmazeShowDTO getShows(@PathVariable int id) {
 	     return service.getShowById(id);
 	   }
+	
+	
+	
+	/** C- Endpoint comments: Crear un endpoint que permita guardar una calificación 
+	 * y comentario en una colección de mongoDB ligadas al ID del show, 
+	 * retorna el status de la petición. */
+	@PostMapping("/comments")
+	public boolean saveComment(@RequestBody Comments comment) {
+		return service.saveComments(comment);
+	}
 	
 }

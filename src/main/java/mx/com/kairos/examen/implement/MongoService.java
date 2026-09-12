@@ -13,9 +13,11 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.result.InsertOneResult;
 
 import mx.com.kairos.examen.Constants.Constants;
 import mx.com.kairos.examen.dto.TvmazeShowDTO;
+import mx.com.kairos.examen.model.Comments;
 import tools.jackson.databind.ObjectMapper;
 
 
@@ -24,13 +26,14 @@ public class MongoService {
 
 
 	private MongoCollection<Document> collection;
+	private MongoCollection<Document> collectionComment;
 
 	public MongoService() {
 
 		MongoClient mongoClient = MongoClients.create(Constants.MONGO_CONNECTION);
 		MongoDatabase database = mongoClient.getDatabase("tvmaze");
 		this.collection = database.getCollection("shows");
-	
+		this.collectionComment = database.getCollection("comments");
 	}
 
 //crea la caché con tiempo de vida de 10 min y una cantidad maxima de request de 1000
@@ -57,6 +60,14 @@ public class MongoService {
 		Document document = new Document(map);
 		collection.insertOne(document);
 		showCache.put(String.valueOf(element.getId()), document);
+	}
+	
+	public boolean saveComments(Comments element) {
+		ObjectMapper mapper = new ObjectMapper();
+		Map<String, Comments> map = mapper.convertValue(element, Map.class);
+		Document document = new Document(map);
+		InsertOneResult result = collectionComment.insertOne(document);
+		return result.wasAcknowledged();
 	}
 
 }

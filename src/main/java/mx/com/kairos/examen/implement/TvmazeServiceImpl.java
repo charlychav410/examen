@@ -13,6 +13,7 @@ import mx.com.kairos.examen.Constants.Constants;
 import mx.com.kairos.examen.dto.TvMazeResponseDTO;
 import mx.com.kairos.examen.dto.TvmazeDTO;
 import mx.com.kairos.examen.dto.TvmazeShowDTO;
+import mx.com.kairos.examen.model.Comments;
 import mx.com.kairos.examen.service.TvmazeService;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
@@ -97,6 +98,13 @@ public class TvmazeServiceImpl implements TvmazeService {
 			tvmazeShowDTO = mapper.convertValue(response, TvmazeShowDTO.class);
 		}
 		return tvmazeShowDTO;
+	}
+	
+	
+	//Guarda los comentarios ligados al id del show
+	@Override
+	public boolean saveComments(Comments element) {
+		return mongoConection.saveComments(element);
 	}
 
 
